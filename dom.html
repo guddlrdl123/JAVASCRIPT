@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Javascript를 이용한 DOM</title>
+    <style>
+        body {
+  font-family: sans-serif;
+}
+
+.modal-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal {
+  background: white;
+  padding: 24px 16px;
+  border-radius: 4px;
+  width: 320px;
+}
+
+.modal-title {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.modal p {
+  font-size: 16px;
+}
+
+.close-wrapper {
+  text-align: right;
+}
+    </style>
+</head>
+<body>
+    <div id="root">
+
+    </div>
+    <br>
+    <button id="open">모달 열기 버튼</button>
+    <div class="modal-wrapper">
+      <div class="modal">
+        <div class="modal-title">안녕하세요</div>
+        <p>모달 내용은 어쩌고 저쩌고..</p>
+        <div class="close-wrapper">
+          <button id="close">닫기</button>
+        </div>
+      </div>
+    </div>
+</body>
+<script>
+    // h1 태그 : Dom으로 만드는 HTML!
+    const headline = document.createElement('h1');
+    headline.innerText = 'Dom으로 만드는 HTML!';
+    // p 태그 : Javascript의 DOM을 이용한 테이블 생성
+    const paragraph = document.createElement('p');
+    paragraph.innerText = 'Javascript의 DOM을 이용한 테이블 생성';
+    // table 태그
+    const table1 = document.createElement('table');
+    // tr 태그, th 태그
+    const tr = document.createElement('tr');
+    const th = document.createElement('th');
+    const title = ['이름', '나이', '이메일'];
+    // 이름, 나이, 이메일
+    const root = document.getElementById('root');
+    root.appendChild(headline);
+    root.appendChild(paragraph);
+    root.appendChild(table1);
+    table1.appendChild(tr);
+    title.forEach(title => {
+        const th = document.createElement('th');
+        th.innerText = title;
+        tr.appendChild(th);
+    });
+    const data = [
+        {name:'홍길동', age:20, email: 'hong@naver.com'},
+        {name:'이순신', age:30, email: 'lee@naver.com'},
+        {name:'이성계', age:40, email: 'lees@naver.com'},
+    ];
+    data.forEach(user => {
+        const tr = document.createElement('tr');
+        table1.appendChild(tr);
+        for(let key in user){
+            const td = document.createElement('td');
+            td.innerText=user[key];
+            tr.appendChild(td);
+        }
+        const {name, age, email} = user;
+        const td_name = document.createElement('td');
+        td_name.innerText = name;
+        const td_age = document.createElement('td');
+        td_age.innerText = age;
+        const td_email = document.createElement('td');
+        td_email.innerText = email;
+    });
+    // table1.getAttribute() // 특정 속성값을 불러옴
+    table1.setAttribute("id", "tab"); // 속성 집어넣기
+    table1.setAttribute("border", 1);
+    table1.setAttribute("style", "border-collapse: collapse;");
+
+    root.appendChild(document.createElement('hr'));
+    // count 버튼 UI 생성...
+    const div1 = document.createElement('div');
+    root.appendChild(div1);
+    const cnt = document.createElement('h2');
+    cnt.getAttribute("id", "number");
+    cnt.innerText = 0;
+    div1.appendChild(cnt);
+
+    const btn1 = document.createElement('button');
+    btn1.setAttribute("id", "increse");
+    btn1.innerText = "+1";
+    // btn1에 이벤트 처리 (onclick() -> 클릭 이벤트 처리)
+    // btn1.addEventHendler('click', () => {})
+    btn1.onclick = () => {
+        const current = parseInt(cnt.innerText, 10);
+        cnt.innerText = current + 1;
+    }
+    const btn2 = document.createElement('button');
+    btn2.setAttribute("id", "decrease");
+    btn2.innerText = "-1";
+    // btn2에 이벤트 처리 (onclick() -> 클릭 이벤트 처리)
+    btn2.onclick = () => {
+        const current = parseInt(cnt.innerText, 10);
+        cnt.innerText = current - 1;
+    }
+
+    // div에 버튼 추가
+    div1.appendChild(btn1);
+    div1.appendChild(btn2);
+
+    // 모달 창 설정
+    const open = document.getElementById("open");
+    const close = document.getElementById("close");
+    const modal = document.querySelector(".modal-wrapper");
+
+    // 이벤트 처리 : 버튼 클릭시 이벤트
+    open.onclick = () => {
+        modal.style.display = 'flex';
+    };
+    close.onclick = () => {
+        modal.style.display = 'none';
+    };
+    </script>
+</html>

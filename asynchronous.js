@@ -178,7 +178,7 @@ increaseAndPrintPromise(0).then(n => {
 
 // 기본 사용법
 function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise(resolve => setTimeout(resolve, ms)); // rejact시 처리하지 않음.
 }
 
 async function process() { // 비동기 작업을 포함하는 함수에 async를 사용함.
@@ -199,4 +199,110 @@ process().then(()=>{
     console.log('작업이 끝났습니다.');
 })
 
-fetch().then().catch()
+
+// async 함수에 에러 발생시에는 throw를 사용하고, 에러를 제어하는 try/catch 구문을 사용.
+// 에러 처리
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms)); // rejact시 처리하지 않음.
+}
+
+async function makeError() { // 비동기 작업을 포함하는 함수에 async를 사용함.
+  await sleep(1000);
+  const error = new Error();
+  throw error; // 에러 발생
+} 
+
+async function process(){
+    try { // 에러는 try/catch 구문으로 제어.
+        await makeError(); 
+    } catch (error) {
+        console.error(e)
+    }
+}
+
+process();
+
+// 비동기 함수를 여러 개 사용하는 경우, 
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+const getDog = async () => {
+    await sleep(2000);
+    return '멍멍이';
+}
+
+const getRabbit = async () => {
+    await sleep(500);
+    return '토끼';
+}
+
+const getTurtle = async () => {
+    await sleep(1000);
+    return '거북이';
+}
+
+async function process() { 
+    
+    const dog = await getDog();
+    console.log(dog)
+    const rabbit = await getRabbit();
+    console.log(rabbit)
+    const turtle = await getTurtle();
+    console.log(turtle)
+}
+process();
+
+console.log("Promise.all() 사용")
+async function processAll() { // promise.all() 사용 : 비동기 함수들을 동시에 실행
+    const result = await Promise.all([getDog(), getRabbit(), getTurtle()]);
+    console.log(result) // ['멍멍이', '토끼', '거북이']
+    /*
+    const [dog, rabbit, turtle] = await Promise.all([getDog(), getRabbit(), getTurtle()]);
+
+    ## Promise.all() : 동시에 시작하느 비동기 중에 하나라도 실패하면, 모두 다 실패 처리.
+    */
+}
+processAll();
+
+// Promise.race() : 여러 개의 비동기적 함수를 등록해서 가장 빨리 끝난 것만 반환
+//                  각 Promise가 실패했을 경우, 가장 먼저 끝난 비동기적 함수가 실패하면 실패로 간주.
+//                  가장 먼저 끝난 비동기적 함수가 아닌 다른 비동기적 함수가 실패인 경우는 무시
+console.log("Promise.race() 사용")
+async function processRace() { // promise.all() 사용 : 비동기 함수들을 동시에 실행
+    const result = await Promise.race([getDog(), getRabbit(), getTurtle()]);
+    console.log(result) // ['멍멍이', '토끼', '거북이']
+    /*
+    const [dog, rabbit, turtle] = await Promise.all([getDog(), getRabbit(), getTurtle()]);
+
+    ## Promise.all() : 동시에 시작하는 비동기 중에 하나라도 실패하면, 모두 다 실패 처리.
+    */
+}
+processRace();
+
+async function testDB() { // aysnc 함수의 결과는 Promise로 받아서 then() 처리 가능
+    // fetch(url, header객체)
+    await fetch("https://reqres.in/api/users", {
+        method: 'GET',
+        headers: {
+            "x-api-key": "reqres_a5e69fafbe804c9abfe9915cd3372faa"
+        }
+    });
+}
+// testDB() 결과 Respone 객체(data 부분 -> ReadableStream)
+// res 결과를 json() 함수는 결과를 json 형식으로 변환.
+testDB().then(res => res.json()) 
+        .then(results => console.log(results['data'])); // results는 json 처리된 결과
+        // result['data']로 data 부분만 추출.
+
+async function testDB() {
+    return fetch("https://reqres.in/api/users", {
+        method: 'GET',
+        headers: {
+            "x-api-key": "reqres_a5e69fafbe804c9abfe9915cd3372faa"
+        }
+    });
+}
+
+testDB()
+  .then(res => res.json())
+  .then(results => console.log(results['data']));
